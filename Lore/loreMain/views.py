@@ -35,6 +35,7 @@ def get_story(request, story_id):
     except Story.DoesNotExist:
     	return HttpResponse("Uh oh, not a valid story")
     story_chapters = StoryChapters.objects.filter(story_id=story_object)
-    context = {"story" : story_object, "chapters": story_chapters}
+    #story_chapters = []
+    context = {"story" : story_object, "nodes": story_chapters}
     return HttpResponse(template.render(context, request))
     

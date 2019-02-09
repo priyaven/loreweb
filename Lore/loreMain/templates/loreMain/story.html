@@ -1,4 +1,5 @@
 {% extends './base.html' %}
+{% load mptt_tags %}
 {% block content %}
 
 <div id="story_{{story.pk}}">
@@ -8,7 +9,7 @@
 	<div class="story_author">
 		{{ story.author }}
 	</div>
-
+<!--
 {% for chapter in chapters %}
 	<div id="chapter_{{chapter.chaper_number}}">
 		Chapter: {{ chapter.chapter_number }}
@@ -17,6 +18,21 @@
 		No Chapter: {{ chapter.no_chapter }}
 	</div>
 {% endfor %}
+-->
+
+<h1>Chapters</h1>
+<ul>
+    {% recursetree nodes %}
+        <li>
+            {{ node.chapter_number }}
+            {% if not node.is_leaf_node %}
+                <ul class="children">
+                    {{ children }}
+                </ul>
+            {% endif %}
+        </li>
+    {% endrecursetree %}
+</ul>
 
 </div>
 {% endblock %}
