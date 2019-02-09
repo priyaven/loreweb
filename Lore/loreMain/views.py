@@ -2,13 +2,15 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseForbidden
 from django.template import loader
 
-from .models import InterestedUsers
+from .models import InterestedUsers, Story, StoryChapters
 
 # Create your views here.
 
 def index(request):
     template = loader.get_template('loreMain/index.html')
-    return HttpResponse(template.render({}, request))
+    all_stories = Story.objects.all()
+    context = {"stories" : all_stories}
+    return HttpResponse(template.render(context, request))
     #return render(request, 'loreMain/index.html', {})
 
 def landing(request):

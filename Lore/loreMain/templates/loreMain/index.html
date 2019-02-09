@@ -1,1 +1,18 @@
 {% extends './base.html' %}
+
+{% block content %}
+{% load static %}
+
+{% for story in stories %}
+	<div id="story_{{story.pk}}">
+		<div class="story_title">
+			<h2><a href="../story/{{ story.pk }}">{{ story.title }}</a></h2>
+		</div>
+		<div class="story_author">
+			{{ story.author }}
+		</div>
+	</div>
+{% endfor %}
+
+
+{% endblock %}
