@@ -16,6 +16,6 @@ class Story(models.Model):
 class StoryChapters(models.Model):
     story_id = models.ForeignKey(Story, on_delete=models.CASCADE)
     chapter_number = models.IntegerField()
-    prev_chapter = models.IntegerField() #models.ForeignKey('StoryChapters', on_delete=models.CASCADE)
-    yes_chapter = models.IntegerField() #models.ForeignKey('StoryChapters', on_delete=models.CASCADE)
-    no_chapter = models.IntegerField() #models.ForeignKey('StoryChapters', on_delete=models.CASCADE)
+    prev_chapter = models.IntegerField(blank=True, null=True) #models.ForeignKey('StoryChapters', on_delete=models.CASCADE)
+    yes_chapter = models.IntegerField(blank=True, null=True) #models.ForeignKey('StoryChapters', on_delete=models.CASCADE)
+    no_chapter = models.IntegerField(blank=True, null=True) #models.ForeignKey('StoryChapters', on_delete=models.CASCADE)
