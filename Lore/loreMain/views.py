@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.template import loader
 
 from .models import InterestedUsers
@@ -25,3 +25,8 @@ def post_email(request):
             new_interested_user.save()
         return HttpResponse(204)
     return HttpResponseForbidden("Allowed Only Via Post")
+
+def get_story(request, story_id):
+    template = loader.get_template('loreMain/story.html')
+    return HttpResponse(template.render({}, request))
+    
