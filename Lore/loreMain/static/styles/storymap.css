@@ -1,9 +1,9 @@
-circle {
+.circle {
     fill: none;
     stroke:lightgray;
     stroke-width: 1px;
 }
 
-storycircle {
+.storycircle {
 	stroke=black;
 }
