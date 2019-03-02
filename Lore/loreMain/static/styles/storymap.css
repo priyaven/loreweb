@@ -1,0 +1,9 @@
+circle {
+    fill: none;
+    stroke:lightgray;
+    stroke-width: 1px;
+}
+
+storycircle {
+	stroke=black;
+}

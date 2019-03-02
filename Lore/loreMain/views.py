@@ -17,6 +17,10 @@ def landing(request):
 	template = loader.get_template('loreMain/landing.html')
 	return HttpResponse(template.render({}, request))
 
+def storymap(request):
+    template = loader.get_template('loreMain/storymap.html')
+    return HttpResponse(template.render({}, request))
+
 def post_email(request):
     if request.POST:
         email = request.POST['email']

@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="Concentric circles"/>
+    <title>Concentric circles</title>
+    <link type="text/css" href="{% static 'styles/storymap.css' %}" rel="stylesheet"/>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+  </head>
+  <body>
+    <svg width="1000" height="800">
+    </svg>
+  </body>
+  <script>
+    var bbox, radii, svg, target;
+
+    svg = d3.select('svg');
+    bbox = svg[0][0].getBoundingClientRect();
+
+    radii = [35, 100, 170, 240, 310, 380]
+
+    initial_center_x = bbox.width/2
+    initial_center_y = bbox.height/2
+
+
+
+    target = svg.append('g')
+        .attr('transform', "translate(" + initial_center_x + "," + initial_center_y + ")");
+
+    target.selectAll('circle')
+        .data(radii)
+      .enter().append('circle')
+        .attr('class', 'circle')
+        .attr('r', function(d) {return d;});
+
+    first_circle_1_x = initial_center_x 
+    first_circle_1_y = initial_center_y + radii[1]
+
+    first_circle_2_x = initial_center_x 
+    first_circle_2_y = initial_center_y - radii[1]
+
+    target2 = svg.append('g').attr('fill', 'red');
+
+    target2.append('circle')
+        .attr('class', 'storycircle')
+        .attr('r', 35)
+        .attr('transform', "translate(" + first_circle_2_x + "," + first_circle_2_y + ")");
+
+    target2.append('circle')
+              .attr('class', 'storycircle')
+              .attr('transform', "translate(" + first_circle_1_x + "," + first_circle_1_y + ")")
+              .attr('r', 35);
+
+    target3 = svg.append('g')
+
+    second_circle_1_x = first_circle_1_x + (radii[2]/1.414)
+    second_circle_1_y = first_circle_1_y + 17
+
+    second_circle_2_x = first_circle_1_x - (radii[2]/1.414)
+    second_circle_2_y = first_circle_1_x + 17
+
+    second_circle_3_x = first_circle_2_x + (radii[2]/1.414)
+    second_circle_3_y = first_circle_2_y - 17
+
+    second_circle_4_x = first_circle_2_x - (radii[2]/1.414)
+    second_circle_4_y = first_circle_2_y - 17
+
+    target3.append('circle')
+        .attr('class', 'storycircle')
+        .attr('r', 35)
+        .attr('transform', "translate(" + second_circle_1_x + "," + second_circle_1_y + ")");
+
+    target3.append('circle')
+        .attr('class', 'storycircle')
+        .attr('r', 35)
+        .attr('transform', "translate(" + second_circle_2_x + "," + second_circle_2_y + ")");
+
+    target3.append('circle')
+        .attr('class', 'storycircle')
+        .attr('r', 35)
+        .attr('transform', "translate(" + second_circle_3_x + "," + second_circle_3_y + ")");
+
+    target3.append('circle')
+        .attr('class', 'storycircle')
+        .attr('r', 35)
+        .attr('transform', "translate(" + second_circle_4_x + "," + second_circle_4_y + ")");
+
+
+    target4 = svg.append('g')
+
+    third_circle_1_x = second_circle_1_x + (70/1.414)
+    third_circle_1_y = second_circle_1_y + 35 + 35/2 
+
+    target4.append('circle')
+        .attr('class', 'storycircle')
+        .attr('r', 35)
+        .attr('transform', "translate(" + third_circle_1_x + "," + third_circle_1_y + ")");
+
+
+
+  </script>
+</html>
