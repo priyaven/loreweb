@@ -17,6 +17,13 @@
      alert(text)
     }
 
+    function get_coordinates_from_angle(originx, originy, angle, radius) {
+      newx = radius * Math.cos(angle * Math.PI/180) + originx
+      newy = radius * Math.sin(angle * Math.PI/180) + originy 
+
+      return [newx, newy];
+    }
+
     var bbox, radii, svg, target;
 
     svg = d3.select('svg');
@@ -30,7 +37,6 @@
     initial_center_y = bbox.height/2
 
 
-
     target = svg.append('g')
         .attr('transform', "translate(" + initial_center_x + "," + initial_center_y + ")");
 
@@ -40,96 +46,56 @@
         .attr('class', 'circle')
         .attr('r', function(d) {return d;});
 
-
     target2 = svg.append('g').attr('fill', 'red');
+    angles2 = [90, 270]
+    for (var i = 0; i < angles2.length; i++) {
+        nodeCoords = get_coordinates_from_angle(initial_center_x, initial_center_y, angles2[i], radii[1])
+        target2.append('circle')
+        .attr('class', 'storycircle')
+        .attr('r', node_radius)
+        .attr('transform', "translate(" + nodeCoords[0] + "," + nodeCoords[1] + ")");
+    }
 
-    first_circle_1_x = initial_center_x 
-    first_circle_1_y = initial_center_y + radii[1]
-
-    first_circle_2_x = initial_center_x 
-    first_circle_2_y = initial_center_y - radii[1]
-
-    line_end_x = (first_circle_1_x + first_circle_2_x)/2
-    line_end_y = (first_circle_1_y + first_circle_2_y)/2
-
+    /* 
+    // Arc connecting children. 
     target2.append('path')
         .attr('d', 'M' + first_circle_1_x + ' ' + first_circle_1_y + '\nA ' + radii[1] + ' ' + radii[1] + ' 90 0 1 ' + first_circle_2_x + ' ' + first_circle_2_y)
         .attr('stroke', 'black')
         .attr('fill', 'none')
 
-    target2.append('circle')
-        .attr('onclick', 'test("c1")')
-        .attr('class', 'storycircle')
-        .attr('r', node_radius)
-        .attr('transform', "translate(" + first_circle_2_x + "," + first_circle_2_y + ")");
-
-    target2.append('circle')
-            .attr('onclick', 'test("c2")')
-              .attr('class', 'storycircle')
-              .attr('transform', "translate(" + first_circle_1_x + "," + first_circle_1_y + ")")
-              .attr('r', node_radius);
-
+    // line to middle of arc. 
     target2.append('line')
         .attr('x1', initial_center_x)
         .attr('x2', 400)
         .attr('y1', initial_center_y)
         .attr('y2', initial_center_y)
         .attr('stroke', 'lightgray')
-
+    */ 
 
     target3 = svg.append('g').attr('fill', 'green')
 
-    second_factor = 1.414
-    second_diff = node_radius/2
-
-    second_circle_1_x = first_circle_1_x + (radii[2]/second_factor)
-    second_circle_1_y = first_circle_1_y + second_diff
-
-    second_circle_2_x = first_circle_1_x - (radii[2]/second_factor)
-    second_circle_2_y = first_circle_1_x + second_diff
-
-    second_circle_3_x = first_circle_2_x + (radii[2]/second_factor)
-    second_circle_3_y = first_circle_2_y - second_diff
-
-    second_circle_4_x = first_circle_2_x - (radii[2]/second_factor)
-    second_circle_4_y = first_circle_2_y - second_diff
-
-    target3.append('circle')
+    angles3 = [50, 130, 230, 310]
+    for (var i = 0; i < angles3.length; i++) {
+        nodeCoords = get_coordinates_from_angle(initial_center_x, initial_center_y, angles3[i], radii[2])
+        target3.append('circle')
+        .attr('class', 'storycircle')
         .attr('r', node_radius)
-        .attr('transform', "translate(" + second_circle_1_x + "," + second_circle_1_y + ")");
+        .attr('transform', "translate(" + nodeCoords[0] + "," + nodeCoords[1] + ")");
 
-    target3.append('circle')
-        .attr('r', node_radius)
-        .attr('transform', "translate(" + second_circle_2_x + "," + second_circle_2_y + ")");
-
-    target3.append('circle')
-        .attr('r', node_radius)
-        .attr('transform', "translate(" + second_circle_3_x + "," + second_circle_3_y + ")");
-
-    target3.append('circle')
-        .attr('r', node_radius)
-        .attr('transform', "translate(" + second_circle_4_x + "," + second_circle_4_y + ")");
+    }
 
 
     target4 = svg.append('g').attr('fill', 'blue')
 
-    third_factor = 2
-    third_diff =  node_radius/2
-
-    third_circle_1_x = second_circle_1_x + (radii[2]/third_factor)
-    third_circle_1_y = second_circle_1_y + third_diff
-
-    third_circle_2_x = second_circle_1_x - (radii[2]/third_factor) - radii[2] + radii[3]
-    third_circle_2_y = second_circle_1_y + third_diff*6
-
-    target4.append('circle')
+    angles4 = [30, 70, 110, 150, 210, 250, 290, 330]
+    for (var i = 0; i < angles4.length; i++) {
+        nodeCoords = get_coordinates_from_angle(initial_center_x, initial_center_y, angles4[i], radii[3])
+        target4.append('circle')
+        .attr('class', 'storycircle')
         .attr('r', node_radius)
-        .attr('transform', "translate(" + third_circle_1_x + "," + third_circle_1_y + ")");
+        .attr('transform', "translate(" + nodeCoords[0] + "," + nodeCoords[1] + ")");
 
-
-    target4.append('circle')
-        .attr('r', node_radius)
-        .attr('transform', "translate(" + third_circle_2_x + "," + third_circle_2_y + ")");
+    }
 
 
   </script>
