@@ -9,7 +9,7 @@
     <script src="http://d3js.org/d3.v3.min.js"></script>
   </head>
   <body>
-    <svg width="1000" height="800">
+    <svg width="1000" height="810">
     </svg>
   </body>
   <script>
@@ -29,9 +29,9 @@
     svg = d3.select('svg');
     bbox = svg[0][0].getBoundingClientRect();
 
-    radii = [30, 100, 170, 240, 310, 380]
+    radii = [25, 80, 160, 240, 310, 385]
 
-    node_radius = 30 
+    node_radius = 25 
 
     initial_center_x = bbox.width/2
     initial_center_y = bbox.height/2
@@ -45,6 +45,13 @@
       .enter().append('circle')
         .attr('class', 'circle')
         .attr('r', function(d) {return d;});
+
+    target1 = svg.append('g').attr('fill', 'darkblue')
+    target1.append('circle')
+        .attr('class', 'storycircle')
+        .attr('r', node_radius)
+        .attr('transform', "translate(" + initial_center_x + "," + initial_center_y + ")");
+
 
     target2 = svg.append('g').attr('fill', 'red');
     angles2 = [90, 270]
@@ -81,7 +88,6 @@
         .attr('class', 'storycircle')
         .attr('r', node_radius)
         .attr('transform', "translate(" + nodeCoords[0] + "," + nodeCoords[1] + ")");
-
     }
 
 
@@ -94,7 +100,26 @@
         .attr('class', 'storycircle')
         .attr('r', node_radius)
         .attr('transform', "translate(" + nodeCoords[0] + "," + nodeCoords[1] + ")");
+    }
 
+    target5 = svg.append('g').attr('fill', 'purple')
+    angles5 = [18, 42, 58, 82, 98, 122, 138, 162, 198, 222, 238, 262, 278, 302, 318, 342]
+    for (var i = 0; i < angles5.length; i++) {
+        nodeCoords = get_coordinates_from_angle(initial_center_x, initial_center_y, angles5[i], radii[4])
+        target5.append('circle')
+        .attr('class', 'storycircle')
+        .attr('r', node_radius)
+        .attr('transform', "translate(" + nodeCoords[0] + "," + nodeCoords[1] + ")");
+    }
+
+    target5 = svg.append('g').attr('fill', 'maroon')
+    angles5 = [14, 22, 38, 46, 54, 62, 78, 86, 94, 102, 118, 126, 134, 142, 158, 166, 194, 202, 218, 226, 234, 242, 258, 266, 274, 282, 298, 306, 314, 322, 338, 346]
+    for (var i = 0; i < angles5.length; i++) {
+        nodeCoords = get_coordinates_from_angle(initial_center_x, initial_center_y, angles5[i], radii[5])
+        target5.append('circle')
+        .attr('class', 'storycircle')
+        .attr('r', node_radius)
+        .attr('transform', "translate(" + nodeCoords[0] + "," + nodeCoords[1] + ")");
     }
 
 
