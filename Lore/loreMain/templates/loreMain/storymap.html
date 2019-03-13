@@ -1,21 +1,20 @@
-{% load static %}
+{% extends './base.html' %} {% block content %} {% load static %}
 <!DOCTYPE html>
-<html>
-  <head>
+
     <meta charset="utf-8">
     <meta name="description" content="Concentric circles"/>
-    <title>Concentric circles</title>
+    <title>The Magic Shoelace | Lore </title>
     <link type="text/css" href="{% static 'styles/storymap.css' %}" rel="stylesheet"/>
     <script src="http://d3js.org/d3.v3.min.js"></script>
-  </head>
-  <body>
+ 
     <div class="fullSvg">
-      <svg width="1000" height="810">
+      <svg class='fullSvgNode' width="1000" height="810">
       </svg>
     </div>
     <div class="singleNode">
+      <svg class='singleSvgNode' width="500" height="400">
+      </svg>
     </div>
-  </body>
   <script>
     function test(text){
      alert(text)
@@ -70,25 +69,107 @@
         return nodes
     }
 
-    function draw_nodes(target_obj, nodes) { 
+    function draw_nodes(target_obj, nodes, cur_level) { 
+      if (cur_level==0) {
+          prev_color = ''
+        } else {
+          prev_color = colors[cur_level-1]
+        }
+        if (cur_level == 5) {
+          child_color = ''
+        } else {
+          child_color = colors[cur_level+1]
+        }
       for (i=0; i< nodes.length; i++) {
         target_obj.append('circle')
               .attr('class', 'storycircle')
               .attr('r', node_radius)
+              .attr('onclick', "showSingleNode('" + prev_color + "','" + colors[cur_level] + "','" + child_color + "')")
               .attr('transform', "translate(" + nodes[i][0] + "," + nodes[i][1] + ")");
       }
     }
 
-    function onNodeClick(prev_color, cur_color, child_color) {
+    function showSingleNode(prev_color, cur_color, child_color) {
+      fullsvgDiv = document.getElementsByClassName('fullSvg')
+      fullsvgDiv[0].style.visibility='hidden' 
+      fullsvgDiv[0].style.display='none'
+
+      singleSvg = d3.select('.singleSvgNode')
+      singleBbox = singleSvg[0][0].getBoundingClientRect()
+
+      single_center_x = singleBbox.width/2
+      single_center_y = singleBbox.height/2
+
+      single_target = singleSvg.append('g')
+
+      cur_x = singleBbox.width/3
+      cur_y = singleBbox.height/3
+
+      if (prev_color.length > 0) {
+
+        single_target.append('line')
+        .attr('x1', 0)
+        .attr('x2', cur_x)
+        .attr('y1', 0)
+        .attr('y2', cur_y)
+        .attr('stroke', 'black')
+
+        single_target.append('circle')
+                .attr('class', 'singlePrevCircle')
+                .attr('fill', prev_color)
+                .attr('r', singleBbox.height/8);
+      }
+
+      singleSvgDiv = document.getElementsByClassName('singleNode')
+      singleSvgDiv[0].style.visibility='visible' 
+
+      if (child_color.length > 0) {
+        yes_node_coords = get_coordinates_from_angle(cur_x, cur_y, 120, singleBbox.height/2)
+        no_node_coords = get_coordinates_from_angle(cur_x, cur_y, 60, singleBbox.height/2)
+
+        single_target.append('line')
+          .attr('x1', cur_x)
+          .attr('x2', yes_node_coords[0])
+          .attr('y1', cur_y)
+          .attr('y2', yes_node_coords[1])
+          .attr('stroke', 'black')
+
+        single_target.append('line')
+          .attr('x1', cur_x)
+          .attr('x2', no_node_coords[0])
+          .attr('y1', cur_y)
+          .attr('y2', no_node_coords[1])
+          .attr('stroke', 'black')
+
+        single_target.append('circle')
+                .attr('class', 'yescircle')
+                .attr('r', singleBbox.height/8)
+                .attr('fill', 'lime')
+                .attr('transform', "translate(" + yes_node_coords[0] + "," + yes_node_coords[1] + ")");
+
+        single_target.append('circle')
+                .attr('class', 'nocircle')
+                .attr('r', singleBbox.height/8)
+                .attr('fill', 'crimson' )
+                .attr('transform', "translate(" + no_node_coords[0] + "," + no_node_coords[1] + ")");
+      }
+
+       single_target.append('circle')
+              .attr('class', 'storycircle')
+              .attr('r', singleBbox.height/8)
+              .attr('fill', cur_color)
+              .attr('transform', "translate(" + cur_x + "," + cur_y + ")");
 
     }
 
     var bbox, radii, svg, target;
 
-    svg = d3.select('svg');
+    svg = d3.select('.fullSvgNode');
     bbox = svg[0][0].getBoundingClientRect();
 
     radii = [25, 80, 160, 240, 310, 385]
+
+    colors = ['darkblue', 'red', 'green', 'blue', 'hotpink', 'navy']
 
     node_radius = 25 
 
@@ -106,39 +187,40 @@
         .attr('r', function(d) {return d;});*/
 
     var freesound = new Audio('https://freesound.org/data/previews/223/223083_3966588-lq.mp3')
-    target1 = svg.append('g').attr('fill', 'darkblue')
+    target1 = svg.append('g').attr('fill', colors[0])
     target1.append('circle')
         .attr('class', 'storycircle')
         .attr('r', node_radius)
-        .attr('onclick', 'freesound.play()')
+        .attr('onclick', 'showSingleNode("navy", "blue", "purple")')
         .attr('transform', "translate(" + initial_center_x + "," + initial_center_y + ")");
 
 
-    target2 = svg.append('g').attr('fill', 'red');
+    target2 = svg.append('g').attr('fill', colors[1]);
     angles2 = [90, 270]
     nodes2 = draw_arcs_lines(target2, angles2, 2)
 
-    target3 = svg.append('g').attr('fill', 'green')
+    target3 = svg.append('g').attr('fill', colors[2])
     angles3 = [50, 130, 230, 310]
     nodes3 = draw_arcs_lines(target3, angles3, 3)
 
-    target4 = svg.append('g').attr('fill', 'blue')
+    target4 = svg.append('g').attr('fill', colors[3])
     angles4 = [30, 70, 110, 150, 210, 250, 290, 330]
     nodes4 = draw_arcs_lines(target4, angles4, 4)
 
-    target5 = svg.append('g').attr('fill', 'hotpink')
+    target5 = svg.append('g').attr('fill', colors[4])
     angles5 = [18, 42, 58, 82, 98, 122, 138, 162, 198, 222, 238, 262, 278, 302, 318, 342]
     nodes5 = draw_arcs_lines(target5, angles5, 5)
 
-    target6 = svg.append('g').attr('fill', 'navy')
+    target6 = svg.append('g').attr('fill', colors[5])
     angles6 = [14, 22, 38, 46, 54, 62, 78, 86, 94, 102, 118, 126, 134, 142, 158, 166, 194, 202, 218, 226, 234, 242, 258, 266, 274, 282, 298, 306, 314, 322, 338, 346]
     nodes6 = draw_arcs_lines(target6, angles6, 6)
 
-    draw_nodes(target2, nodes2)
-    draw_nodes(target3, nodes3)
-    draw_nodes(target4, nodes4)
-    draw_nodes(target5, nodes5)
-    draw_nodes(target6, nodes6)
+    draw_nodes(target2, nodes2, 1)
+    draw_nodes(target3, nodes3, 2)
+    draw_nodes(target4, nodes4, 3)
+    draw_nodes(target5, nodes5, 4)
+    draw_nodes(target6, nodes6, 5)
 
   </script>
-</html>
+
+{% endblock %}
