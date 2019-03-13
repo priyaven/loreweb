@@ -102,3 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+.idea/*
+Lore/loreMain/db.sqlite3
+Lore/loreMain/migrations/*
