@@ -25,7 +25,7 @@ SECRET_KEY = 'p11s82l0u2af*mp5b6ik+z%c4b@o_%i_t5r)40%p1sip#gbk-6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '111.222.333.444', 'www.priyaven.pythonanywhere.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '111.222.333.444', 'priyaven.pythonanywhere.com']
 
 SECURE_SSL_REDIRECT = True
 
