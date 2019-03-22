@@ -1,3 +1,6 @@
+from collections import defaultdict 
+import json 
+
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseForbidden
 from django.template import loader
@@ -39,7 +42,18 @@ def get_story(request, story_id):
     except Story.DoesNotExist:
     	return HttpResponse("Uh oh, not a valid story")
     story_chapters = StoryChapters.objects.filter(story_id=story_object)
-    #story_chapters = []
-    context = {"story" : story_object, "nodes": story_chapters}
+    root = StoryChapters.objects.get(story_id=story_object, depth=1, prev_chapter=None)
+
+    depth_dict = defaultdict(list)
+    bfsq = [root]
+    while bfsq:
+        cur = bfsq.pop()
+        depth_dict[cur.depth].append((cur.chapter_title))
+        if cur.no_chapter:
+            bfsq.append(cur.no_chapter)
+        if cur.yes_chapter:
+            bfsq.append(cur.yes_chapter)
+
+    context = {"story" : story_object, "chapters": story_chapters, "depth_dict": json.dumps(depth_dict)}
     return HttpResponse(template.render(context, request))
     
