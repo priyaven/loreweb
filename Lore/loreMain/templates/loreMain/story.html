@@ -1,7 +1,6 @@
 {% extends './base.html' %}
-{% load mptt_tags %}
 {% block content %}
-
+<script src="https://d3js.org/d3.v3.min.js"></script>
 <div id="story_{{story.pk}}">
 	<div class="story_title">
 		<h2><a href="../story/{{ story.pk }}">{{ story.title }}</a></h2>
@@ -9,30 +8,326 @@
 	<div class="story_author">
 		{{ story.author }}
 	</div>
+
+	<div class="fullSvg">
+      <svg class='fullSvgNode' width="1000" height="810">
+      </svg>
+    </div>
+    <div class="singleNode" style="display: none; visibility: hidden">
+      <button onclick="show_storymap()"> Back to storymap </button>
+      <svg class='singleSvgNode' width="500" height="400">
+      </svg>
+    </div>
 <!--
-{% for chapter in chapters %}
+{% for chapter in nodes %}
 	<div id="chapter_{{chapter.chaper_number}}">
 		Chapter: {{ chapter.chapter_number }}
-		Prev Chapter: {{ chapter.prev_chapter }}
-		Yes Chapter: {{ chapter.yes_chapter }}
-		No Chapter: {{ chapter.no_chapter }}
+		Prev Chapter: {{ chapter.prev_chapter.chapter_number }}
+		Yes Chapter: {{ chapter.yes_chapter.chapter_number }}
+		No Chapter: {{ chapter.no_chapter.chapter_number }}
 	</div>
 {% endfor %}
 -->
-
-<h1>Chapters</h1>
-<ul>
-    {% recursetree nodes %}
-        <li>
-            {{ node.chapter_number }}
-            {% if not node.is_leaf_node %}
-                <ul class="children">
-                    {{ children }}
-                </ul>
-            {% endif %}
-        </li>
-    {% endrecursetree %}
-</ul>
-
 </div>
+
+<script>
+
+	function test(text){
+     	alert(text)
+    }
+
+    function get_coordinates_from_angle(originx, originy, angle, radius) {
+      newx = radius * Math.cos(angle * Math.PI/180) + originx
+      newy = radius * Math.sin(angle * Math.PI/180) + originy 
+
+      return [newx, newy];
+    }
+
+    function average_angles(list_of_angles) {
+      combined_angles = []
+      for (i=0;i<list_of_angles.length; i+=2) {
+        new_angle = (list_of_angles[i] + list_of_angles[i+1])/2
+        combined_angles.push(new_angle)
+      }
+      return combined_angles
+      
+    }
+
+    function draw_arcs_lines(target_obj, angles, circle_num) {
+        nodes = []
+        for (var i = 0; i < angles.length; i++) {
+          nodeCoords = get_coordinates_from_angle(initial_center_x, initial_center_y, angles[i], radii[circle_num-1])
+          nodes.push(nodeCoords)
+        }
+        for (i=0; i< nodes.length; i+=2) {
+          kid1 = nodes[i]
+          kid2 = nodes[i+1]
+          target2.append('path')
+          .attr('d', 'M' + kid1[0] + ' ' + kid1[1] + "\nA " + radii[circle_num-1] + ' ' + radii[circle_num-1] + ' 90 0 1' + kid2[0] + ' ' + kid2[1])
+          .attr('stroke', 'black')
+          .attr('fill', 'none')
+        }
+        line_angles = average_angles(angles)
+        for (angle of line_angles) {
+          coords = get_coordinates_from_angle(initial_center_x, initial_center_y, angle, radii[circle_num-1])
+          if (circle_num == 2) {
+            linestart_coords = [initial_center_x, initial_center_y]
+          } else {
+          linestart_coords = get_coordinates_from_angle(initial_center_x, initial_center_y, angle, radii[circle_num-2]  + node_radius)
+          }
+          target_obj.append('line')
+            .attr('x1', linestart_coords[0])
+            .attr('x2', coords[0])
+            .attr('y1', linestart_coords[1])
+            .attr('y2', coords[1])
+            .attr('stroke', 'black')
+        }
+        return nodes
+    }
+
+    function draw_nodes(target_obj, nodes, cur_level) { 
+      
+      for (i=0; i< nodes.length; i++) {
+      	cur_depth = cur_level + 1 
+        target_obj.append('circle')
+              .attr('class', 'storycircle')
+              .attr('id', "depth_" + cur_depth + "_node_" + i)
+              .attr('r', node_radius)
+              .attr('onclick', "showSingleNode(" + cur_depth + "," + i + ")")
+              .attr('transform', "translate(" + nodes[i][0] + "," + nodes[i][1] + ")");
+      }
+    }
+
+    function draw_text(target_obj, nodes, titles) {
+    	for (i=0; i< nodes.length; i++) {
+    		target_obj.append('text')
+    		.attr('x', nodes[i][0])
+    		.attr('y', nodes[i][1])
+    		.text("chapter " + titles[i])
+    		.attr("font-family", "sans-serif")
+        	.attr("font-size", "10px")
+        	.attr("text-anchor", 'middle')
+        	.attr("fill", "white");
+      }
+
+    }
+
+    function showSingleNode(cur_depth, node_id) {
+
+		 if (cur_depth==1) {
+		 	prev_color = ''
+		 } else {
+		 	prev_color = colors[cur_depth-1 -1]
+		 }
+		 if (cur_depth == 5) {
+			 child_color = ''
+		 } else {
+			 child_color = colors[cur_depth]
+		 }
+
+		 cur_color = colors[cur_depth - 1]
+
+		  fullsvgDiv = document.getElementsByClassName('fullSvg')
+		  fullsvgDiv[0].style.visibility='hidden' 
+		  fullsvgDiv[0].style.display='none'
+
+		  singleSvgDiv = document.getElementsByClassName('singleNode')
+		  singleSvgDiv[0].style.visibility='visible' 
+		  singleSvgDiv[0].style.display='block'
+
+		  singleSvg = d3.select('.singleSvgNode')
+		  singleBbox = singleSvg[0][0].getBoundingClientRect()
+		  singleSvg.selectAll("*").remove();
+
+		  single_center_x = singleBbox.width/2
+		  single_center_y = singleBbox.height/2
+
+		  single_target = singleSvg.append('g')
+
+		  cur_x = singleBbox.width/3
+		  cur_y = singleBbox.height/3
+
+		  if (prev_color.length > 0) {
+
+		    single_target.append('line')
+		    .attr('x1', 0)
+		    .attr('x2', cur_x)
+		    .attr('y1', 0)
+		    .attr('y2', cur_y)
+		    .attr('stroke', 'black')
+
+		    prev_depth = cur_depth - 1
+		    prev_node_id = Math.floor(node_id/2)
+
+		    single_target.append('circle')
+		            .attr('class', 'singlePrevCircle')
+		            .attr('fill', prev_color)
+		            .attr('onclick', "showSingleNode(" + prev_depth + "," + prev_node_id + ")")
+		            .attr('r', singleBbox.height/8);
+		  }
+
+		  singleSvgDiv = document.getElementsByClassName('singleNode')
+		  singleSvgDiv[0].style.visibility='visible' 
+
+		  if (child_color.length > 0) {
+		    yes_node_coords = get_coordinates_from_angle(cur_x, cur_y, 120, singleBbox.height/2)
+		    no_node_coords = get_coordinates_from_angle(cur_x, cur_y, 60, singleBbox.height/2)
+
+		    single_target.append('line')
+		      .attr('x1', cur_x)
+		      .attr('x2', yes_node_coords[0])
+		      .attr('y1', cur_y)
+		      .attr('y2', yes_node_coords[1])
+		      .attr('stroke', 'black')
+
+		    single_target.append('line')
+		      .attr('x1', cur_x)
+		      .attr('x2', no_node_coords[0])
+		      .attr('y1', cur_y)
+		      .attr('y2', no_node_coords[1])
+		      .attr('stroke', 'black')
+
+		    next_depth = cur_depth + 1
+		    yes_node_id = 2*node_id
+		    no_node_id = 2*node_id + 1
+
+		    single_target.append('circle')
+		            .attr('class', 'yescircle')
+		            .attr('r', singleBbox.height/8)
+		            .attr('fill', 'lime')
+		            .attr('onclick', "showSingleNode(" + next_depth + "," + yes_node_id + ")")
+		            .attr('transform', "translate(" + yes_node_coords[0] + "," + yes_node_coords[1] + ")");
+
+		    single_target.append('circle')
+		            .attr('class', 'nocircle')
+		            .attr('r', singleBbox.height/8)
+		            .attr('fill', 'crimson' )
+		            .attr('onclick', "showSingleNode(" + next_depth + "," + no_node_id + ")")
+		            .attr('transform', "translate(" + no_node_coords[0] + "," + no_node_coords[1] + ")");
+		  }
+
+		   single_target.append('circle')
+		          .attr('class', 'storycircle')
+		          .attr('r', singleBbox.height/8)
+		          .attr('fill', cur_color)
+		          .attr('transform', "translate(" + cur_x + "," + cur_y + ")");
+
+		    single_target.append('text')
+		   	.attr('class', 'curtext')
+			.attr('x', cur_x)
+			.attr('y', cur_y)
+			.text(depth_dict[cur_depth][node_id])
+			.attr("font-family", "sans-serif")
+			.attr("text-anchor", "middle")
+		    .attr("font-size", "20px")
+		    .attr("fill", "white");
+
+		   single_target.append('text')
+		   	.attr('class', 'yestext')
+			.attr('x', yes_node_coords[0])
+			.attr('y', yes_node_coords[1])
+			.text("YES")
+			.attr("font-family", "sans-serif")
+			.attr("text-anchor", "middle")
+		    .attr("font-size", "20px")
+		    .attr("fill", "white");
+
+		   single_target.append('text')
+		   	.attr('class', 'notext')
+			.attr('x', no_node_coords[0])
+			.attr('y', no_node_coords[1])
+			.text("NO")
+			.attr("font-family", "sans-serif")
+			.attr("text-anchor", "middle")
+		    .attr("font-size", "20px")
+		    .attr("fill", "white");
+
+
+    }
+
+    function show_storymap(){
+
+    	singleSvgDiv = document.getElementsByClassName('singleNode')
+      	singleSvgDiv[0].style.visibility='hidden' 
+      	singleSvgDiv[0].style.display='none'
+
+      	fullsvgDiv = document.getElementsByClassName('fullSvg')
+      	fullsvgDiv[0].style.visibility='visible' 
+      	fullsvgDiv[0].style.display='block'
+
+    }
+
+    var bbox, radii, svg, target;
+
+    depth_dict = {{ depth_dict | safe }}
+
+    svg = d3.select('.fullSvgNode');
+    bbox = svg[0][0].getBoundingClientRect();
+
+    radii = [25, 80, 160, 240, 310]
+
+    colors = ['yellow', 'red', 'green', 'blue', 'navy']
+
+    node_radius = 25 
+
+    initial_center_x = bbox.width/2
+    initial_center_y = bbox.height/2
+
+
+    target = svg.append('g')
+        .attr('transform', "translate(" + initial_center_x + "," + initial_center_y + ")");
+
+    var freesound = new Audio('https://freesound.org/data/previews/223/223083_3966588-lq.mp3')
+    
+
+
+    target2 = svg.append('g').attr('fill', colors[1]);
+    angles2 = [90, 270]
+    nodes2 = draw_arcs_lines(target2, angles2, 2)
+    chapters2 = depth_dict[2]
+
+    target3 = svg.append('g').attr('fill', colors[2])
+    angles3 = [50, 130, 230, 310]
+    nodes3 = draw_arcs_lines(target3, angles3, 3)
+    chapters3 = depth_dict[3]
+
+    target4 = svg.append('g').attr('fill', colors[3])
+    angles4 = [30, 70, 110, 150, 210, 250, 290, 330]
+    nodes4 = draw_arcs_lines(target4, angles4, 4)
+    chapters4 = depth_dict[4]
+
+    target5 = svg.append('g').attr('fill', colors[4])
+    angles5 = [18, 42, 58, 82, 98, 122, 138, 162, 198, 222, 238, 262, 278, 302, 318, 342]
+    nodes5 = draw_arcs_lines(target5, angles5, 5)
+    chapters5 = depth_dict[5]
+
+
+    draw_nodes(target2, nodes2, 1)
+    draw_nodes(target3, nodes3, 2)
+    draw_nodes(target4, nodes4, 3)
+    draw_nodes(target5, nodes5, 4)
+
+    draw_text(target2, nodes2, chapters2)
+    draw_text(target3, nodes3, chapters3)
+    draw_text(target4, nodes4, chapters4)
+    draw_text(target5, nodes5, chapters5)
+
+    target1 = svg.append('g').attr('fill', colors[0])
+    target1.append('circle')
+        .attr('class', 'storycircle')
+        .attr('r', node_radius)
+        .attr('onclick', 'showSingleNode(1, 0)')
+        .attr('transform', "translate(" + initial_center_x + "," + initial_center_y + ")");
+    chapters1 = depth_dict[1][0]
+    target1.append('text')
+    	.attr('x', initial_center_x)
+    	.attr('y', initial_center_y)
+    	.text("chapter " + chapters1)
+    	.attr("font-family", "sans-serif")
+    	.attr("text-anchor", "middle")
+        .attr("font-size", "10px")
+        .attr("fill", "white");
+
+</script>
+
 {% endblock %}
