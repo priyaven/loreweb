@@ -1,6 +1,14 @@
 {% extends './base.html' %}
+{% load static %}
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'styles/storymap.css' %}"/>
 <script src="https://d3js.org/d3.v3.min.js"></script>
+
+Sound 
+<label class="switch">
+  <input type="checkbox" checked>
+  <span class="slider round"></span>
+</label>
 <div id="story_{{story.pk}}">
 	<div class="story_title">
 		<h2><a href="../story/{{ story.pk }}">{{ story.title }}</a></h2>
@@ -151,6 +159,7 @@
 
 		    single_target.append('circle')
 		            .attr('class', 'singlePrevCircle')
+		            .attr('id', 'prevcircle')
 		            .attr('fill', prev_color)
 		            .attr('onclick', "showSingleNode(" + prev_depth + "," + prev_node_id + ")")
 		            .attr('r', singleBbox.height/8);
@@ -182,18 +191,39 @@
 		    no_node_id = 2*node_id + 1
 
 		    single_target.append('circle')
-		            .attr('class', 'yescircle')
+		            .attr('id', 'yescircle')
 		            .attr('r', singleBbox.height/8)
 		            .attr('fill', 'lime')
 		            .attr('onclick', "showSingleNode(" + next_depth + "," + yes_node_id + ")")
 		            .attr('transform', "translate(" + yes_node_coords[0] + "," + yes_node_coords[1] + ")");
 
 		    single_target.append('circle')
-		            .attr('class', 'nocircle')
+		            .attr('id', 'nocircle')
 		            .attr('r', singleBbox.height/8)
 		            .attr('fill', 'crimson' )
 		            .attr('onclick', "showSingleNode(" + next_depth + "," + no_node_id + ")")
 		            .attr('transform', "translate(" + no_node_coords[0] + "," + no_node_coords[1] + ")");
+
+		    single_target.append('text')
+			   	.attr('class', 'yestext')
+				.attr('x', yes_node_coords[0])
+				.attr('y', yes_node_coords[1])
+				.text("YES")
+				.attr("font-family", "sans-serif")
+				.attr("text-anchor", "middle")
+			    .attr("font-size", "20px")
+			    .attr("fill", "white");
+
+		   single_target.append('text')
+			   	.attr('class', 'notext')
+				.attr('x', no_node_coords[0])
+				.attr('y', no_node_coords[1])
+				.text("NO")
+				.attr("font-family", "sans-serif")
+				.attr("text-anchor", "middle")
+			    .attr("font-size", "20px")
+			    .attr("fill", "white");
+
 		  }
 
 		   single_target.append('circle')
@@ -212,27 +242,6 @@
 		    .attr("font-size", "20px")
 		    .attr("fill", "white");
 
-		   single_target.append('text')
-		   	.attr('class', 'yestext')
-			.attr('x', yes_node_coords[0])
-			.attr('y', yes_node_coords[1])
-			.text("YES")
-			.attr("font-family", "sans-serif")
-			.attr("text-anchor", "middle")
-		    .attr("font-size", "20px")
-		    .attr("fill", "white");
-
-		   single_target.append('text')
-		   	.attr('class', 'notext')
-			.attr('x', no_node_coords[0])
-			.attr('y', no_node_coords[1])
-			.text("NO")
-			.attr("font-family", "sans-serif")
-			.attr("text-anchor", "middle")
-		    .attr("font-size", "20px")
-		    .attr("fill", "white");
-
-
     }
 
     function show_storymap(){
@@ -246,6 +255,80 @@
       	fullsvgDiv[0].style.display='block'
 
     }
+    /* Web Speech Recognition API initialization */
+	 if (!('webkitSpeechRecognition' in window)) {
+	    //Speech API not supported here…
+	} else { //Let’s do some cool stuff :)
+	    var recognition = new webkitSpeechRecognition(); //That is the object that will manage our whole recognition process. 
+	    recognition.continuous = true;   //Suitable for dictation. 
+	    recognition.interimResults = true;  //If we want to start receiving results even if they are not final.
+	    //Define some more additional parameters for the recognition:
+	    recognition.lang = "en-US"; 
+	    recognition.maxAlternatives = 1; //Since from our experience, the highest result is really the best...
+	}
+
+	recognition.onstart = function() {
+	    //Listening (capturing voice from audio input) started.
+	    //This is a good place to give the user visual feedback about that (i.e. flash a red light, etc.)
+	};
+
+	recognition.onend = function() {
+	    //Again – give the user feedback that you are not listening anymore. If you wish to achieve continuous recognition – you can write a script to start the recognizer again here.
+	    recognition.start()
+	};
+
+	recognition.onresult = function(event) { //the event holds the results
+	//Yay – we have results! Let’s check if they are defined and if final or not:
+	    if (typeof(event.results) === 'undefined') { //Something is wrong…
+	        recognition.stop();
+	        return;
+	    }
+
+	    for (var i = event.resultIndex; i < event.results.length; ++i) {      
+	        if (event.results[i].isFinal) { //Final results
+	        	transcript = event.results[i][0].transcript
+	            console.log("final results: " + transcript);   //Of course – here is the place to do useful things with the results.
+	            if (transcript.includes("yes") || transcript.includes('yeah')) {
+	            	singleSvgDiv = document.getElementsByClassName('singleNode')
+	            	if (singleSvgDiv[0].style.display != 'none') {
+	            		yes_circle = document.getElementById('yescircle')
+	            		yes_circle.onclick()
+	            	}
+	            } 
+
+	            if (transcript.includes("no") || transcript.includes("nope")) {
+	            	singleSvgDiv = document.getElementsByClassName('singleNode')
+	            	if (singleSvgDiv[0].style.display != 'none') {
+	            		no_circle = document.getElementById('nocircle')
+	            		no_circle.onclick()
+	            	}
+	            }
+
+	            if (transcript.includes("start") || transcript.includes("begin")) {
+	            	fullsvgDiv = document.getElementsByClassName('fullSvg')
+	            	if (fullsvgDiv[0].style.display != 'none') {
+	            		start_circle = document.getElementById('startcircle')
+	            		start_circle.onclick()
+	            	}
+	            }
+
+	            if (transcript.includes("back")) {
+	            	singleSvgDiv = document.getElementsByClassName('singleNode')
+	            	if (singleSvgDiv[0].style.display != 'none') {
+	            		prev_circle = document.getElementById('prevcircle')
+	            		if (prev_circle) {
+	            			prev_circle.onclick()
+	            		} else {
+	            			show_storymap()
+	            		}
+	            	}
+	            }
+
+	        } else {   //i.e. interim...
+	            console.log("interim results: " + event.results[i][0].transcript);  //You can use these results to give the user near real time experience.
+	        } 
+	    } //end for loop
+	}; 
 
     var bbox, radii, svg, target;
 
@@ -305,6 +388,7 @@
     target1 = svg.append('g').attr('fill', colors[0])
     target1.append('circle')
         .attr('class', 'storycircle')
+        .attr('id', 'startcircle')
         .attr('r', node_radius)
         .attr('onclick', 'showSingleNode(1, 0)')
         .attr('transform', "translate(" + initial_center_x + "," + initial_center_y + ")");
@@ -317,6 +401,8 @@
     	.attr("text-anchor", "middle")
         .attr("font-size", "10px")
         .attr("fill", "white");
+
+    recognition.start();
 
 </script>
 
