@@ -4,11 +4,16 @@
 <link rel="stylesheet" type="text/css" href="{% static 'styles/storymap.css' %}"/>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 
-Sound 
+Voice recognition: &nbsp; &nbsp;  
 <label class="switch">
   <input type="checkbox" checked onclick="toggle_voice()" id="voice_checkbox">
   <span class="slider round"></span>
 </label>
+<p> 
+	Say "Start" or "Begin" to start. 
+	"Yes" or "No" to navigate. 
+	"Back" to go back to your previous view
+</p>
 <div id="story_{{story.pk}}">
 	<div class="story_title">
 		<h2><a href="../story/{{ story.pk }}">{{ story.title }}</a></h2>
