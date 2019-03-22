@@ -6,7 +6,7 @@
 
 Sound 
 <label class="switch">
-  <input type="checkbox" checked>
+  <input type="checkbox" checked onclick="toggle_voice()" id="voice_checkbox">
   <span class="slider round"></span>
 </label>
 <div id="story_{{story.pk}}">
@@ -32,6 +32,14 @@ Sound
 
 	function test(text){
      	alert(text)
+    }
+
+    function toggle_voice() {
+    	if (document.getElementById("voice_checkbox").checked) { 
+    		recognition.start()
+    	} else { 
+    		recognition.stop()
+    	}
     }
 
     function get_coordinates_from_angle(originx, originy, angle, radius) {
@@ -274,7 +282,10 @@ Sound
 
 	recognition.onend = function() {
 	    //Again – give the user feedback that you are not listening anymore. If you wish to achieve continuous recognition – you can write a script to start the recognizer again here.
-	    recognition.start()
+	    if (document.getElementById("voice_checkbox").checked) {
+	    	recognition.start()
+	    }
+	    
 	};
 
 	recognition.onresult = function(event) { //the event holds the results
