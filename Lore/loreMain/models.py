@@ -22,6 +22,8 @@ class StoryChapters(models.Model):
     yes_chapter = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE, related_name='+')
     no_chapter = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE, related_name='+')
     depth = models.IntegerField()
+    chapter_audio = models.FileField(upload_to='stories', null=True, blank=True)
+    chapter_question_audio = models.FileField(upload_to='questions', null=True, blank=True)
     '''
     prev_chapter = TreeForeignKey('self', null=True, blank=True, 
         related_name='children', db_index=True, on_delete=models.CASCADE)
