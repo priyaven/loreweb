@@ -366,6 +366,10 @@ Voice recognition: &nbsp; &nbsp;
 	            	}
 	            }
 
+	   			if (transcript.includes("home")) {
+	            	show_storymap()
+	            }
+
 	            if (transcript.includes("back")) {
 	            	singleSvgDiv = document.getElementsByClassName('singleNode')
 	            	if (singleSvgDiv[0].style.display != 'none') {
