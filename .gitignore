@@ -106,3 +106,4 @@ venv.bak/
 .idea/*
 Lore/loreMain/db.sqlite3
 Lore/loreMain/migrations/*
+Lore/userdata/*
