@@ -114,7 +114,7 @@ Voice recognition: &nbsp; &nbsp;
     		target_obj.append('text')
     		.attr('x', nodes[i][0])
     		.attr('y', nodes[i][1])
-    		.text("chapter " + titles[i])
+    		.text("chapter " + titles[i][0])
     		.attr("font-family", "sans-serif")
         	.attr("font-size", "10px")
         	.attr("text-anchor", 'middle')
@@ -249,15 +249,45 @@ Voice recognition: &nbsp; &nbsp;
 		   	.attr('class', 'curtext')
 			.attr('x', cur_x)
 			.attr('y', cur_y)
-			.text(depth_dict[cur_depth][node_id])
+			.text(depth_dict[cur_depth][node_id][0])
 			.attr("font-family", "sans-serif")
 			.attr("text-anchor", "middle")
 		    .attr("font-size", "20px")
 		    .attr("fill", "white");
 
+		    chapter_audio_url = depth_dict[cur_depth][node_id][1]
+		    question_audio_url = depth_dict[cur_depth][node_id][2]
+
+		    chaptersound = new Audio(".." + chapter_audio_url)
+		    if (question_audio_url) {
+		    	questionsound = new Audio(".." + question_audio_url)
+		    } else { 
+		    	questionsound = null 
+		    }
+		    
+		    playchapter()
+
     }
 
-    function show_storymap(){
+    function playchapter() {
+    	if (chaptersound) {
+    		recognition.stop()
+    		chaptersound.play()
+    		chaptersound.onended = function() {
+    			if (questionsound) {
+    				questionsound.play()
+    				questionsound.onended = function() {
+    					recognition.start()
+    				}
+    			} else {
+    				recognition.start()
+    			}
+    		}
+    	
+    	}
+    }
+
+    function show_storymap() {
 
     	singleSvgDiv = document.getElementsByClassName('singleNode')
       	singleSvgDiv[0].style.visibility='hidden' 
@@ -287,8 +317,16 @@ Voice recognition: &nbsp; &nbsp;
 
 	recognition.onend = function() {
 	    //Again – give the user feedback that you are not listening anymore. If you wish to achieve continuous recognition – you can write a script to start the recognizer again here.
-	    if (document.getElementById("voice_checkbox").checked) {
+	    if (document.getElementById("voice_checkbox").checked && 
+	     chaptersound.paused) {
+	     	if (questionsound) {
+	     		if (questionsound.paused) {
+	     			recognition.start()
+	     		}
+	     	} else {
 	    	recognition.start()
+	    	}
+
 	    }
 	    
 	};
@@ -340,13 +378,13 @@ Voice recognition: &nbsp; &nbsp;
 	            	}
 	            }
 
-	        } else {   //i.e. interim...
+	        } /*else {   //i.e. interim...
 	            console.log("interim results: " + event.results[i][0].transcript);  //You can use these results to give the user near real time experience.
-	        } 
+	        } */
 	    } //end for loop
 	}; 
 
-    var bbox, radii, svg, target;
+    var bbox, radii, svg, target, chaptersound, questionsound;
 
     depth_dict = {{ depth_dict | safe }}
 
@@ -366,7 +404,7 @@ Voice recognition: &nbsp; &nbsp;
     target = svg.append('g')
         .attr('transform', "translate(" + initial_center_x + "," + initial_center_y + ")");
 
-    var freesound = new Audio('https://freesound.org/data/previews/223/223083_3966588-lq.mp3')
+    //var freesound = new Audio('https://freesound.org/data/previews/223/223083_3966588-lq.mp3')
     
 
 
