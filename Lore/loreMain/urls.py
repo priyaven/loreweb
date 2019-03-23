@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from . import views
 
@@ -9,4 +11,4 @@ urlpatterns = [
     path('story/<int:story_id>', views.get_story, name='get_story'),
     path('storymap', views.storymap, name='storymap')
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
