@@ -48,7 +48,13 @@ def get_story(request, story_id):
     bfsq = [root]
     while bfsq:
         cur = bfsq.pop()
-        depth_dict[cur.depth].append((cur.chapter_title))
+        chapter_audio_url = ''
+        chapter_question_audio_url = ''
+        if cur.chapter_audio:
+            chapter_audio_url = cur.chapter_audio.url 
+        if cur.chapter_question_audio:
+            chapter_question_audio_url = cur.chapter_question_audio.url 
+        depth_dict[cur.depth].append((cur.chapter_title, chapter_audio_url, chapter_question_audio_url))
         if cur.no_chapter:
             bfsq.append(cur.no_chapter)
         if cur.yes_chapter:
