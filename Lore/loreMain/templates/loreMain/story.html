@@ -4,16 +4,19 @@
 <link rel="stylesheet" type="text/css" href="{% static 'styles/storymap.css' %}"/>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 
-Voice recognition: &nbsp; &nbsp;  
-<label class="switch">
-  <input type="checkbox" checked onclick="toggle_voice()" id="voice_checkbox">
-  <span class="slider round"></span>
-</label>
-<p> 
-	Say "Start" or "Begin" to start. 
-	"Yes" or "No" to navigate. 
-	"Back" to go back to your previous view
-</p>
+<div id='VoiceRecog'>
+	Voice recognition: &nbsp; &nbsp;  
+	<label class="switch">
+	  <input type="checkbox" checked onclick="toggle_voice()" id="voice_checkbox">
+	  <span class="slider round"></span>
+	</label>
+	<p> 
+		Say "Start" or "Begin" to start. 
+		"Yes" or "No" to navigate. 
+		"Back" to go back to your previous view
+	</p>
+</div>
+
 <div id="story_{{story.pk}}">
 	<div class="story_title">
 		<h2><a href="../story/{{ story.pk }}">{{ story.title }}</a></h2>
@@ -33,6 +36,13 @@ Voice recognition: &nbsp; &nbsp;
     </div>
 </div>
 
+<div id="player">
+	<button id='playpause' onclick="togglePlay()" disabled="True"> Play </button>
+	<button id='playstory' onclick="playStory()" disabled="True"> Play Story </button>
+	<button id='playquestion' onclick='playQuestion()' disabled="True"> Play Question </button>
+</div>
+
+
 <script>
 
 	function test(text){
@@ -45,6 +55,47 @@ Voice recognition: &nbsp; &nbsp;
     	} else { 
     		recognition.stop()
     	}
+    }
+
+    function playStory() {
+    	if (chaptersound) {
+    		chaptersound.play()
+    	}
+    }
+
+    function playQuestion() {
+    	if (questionsound) {
+    		questionsound.play()
+    	}
+    }
+
+    function togglePlay() {
+    	if (lastPlayed == 'c') {
+    		if (chaptersound) {
+    			if (chaptersound.paused) {
+    				chaptersound.play()
+    			} else {
+    				chaptersound.pause()
+    			}
+    		} else {
+    			if (questionsound && questionsound.paused) {
+    				questionsound.play()
+    			}
+    		}
+    	} else if (lastPlayed == 'q') {
+    		if (questionsound) {
+    			if (questionsound.paused) {
+    				questionsound.play()
+    			} else {
+    				questionsound.pause()
+    			}
+    		} else {
+    			if (chaptersound && chaptersound.paused) {
+    				chaptersound.play()
+    			}
+    		}
+    	}
+
     }
 
     function get_coordinates_from_angle(originx, originy, angle, radius) {
@@ -259,10 +310,14 @@ Voice recognition: &nbsp; &nbsp;
 		    question_audio_url = depth_dict[cur_depth][node_id][2]
 
 		    chaptersound = new Audio(".." + chapter_audio_url)
+		    document.getElementById("playpause").disabled = false;
+		    document.getElementById("playstory").disabled = false;
 		    if (question_audio_url) {
 		    	questionsound = new Audio(".." + question_audio_url)
+		    	document.getElementById("playquestion").disabled = false;
 		    } else { 
 		    	questionsound = null 
+		    	document.getElementById("playquestion").disabled = true;
 		    }
 		    
 		    playchapter()
@@ -273,9 +328,11 @@ Voice recognition: &nbsp; &nbsp;
     	if (chaptersound) {
     		recognition.stop()
     		chaptersound.play()
+    		lastPlayed = 'c'
     		chaptersound.onended = function() {
     			if (questionsound) {
     				questionsound.play()
+    				lastPlayed = 'q'
     				questionsound.onended = function() {
     					recognition.start()
     				}
@@ -389,6 +446,7 @@ Voice recognition: &nbsp; &nbsp;
 	}; 
 
     var bbox, radii, svg, target, chaptersound, questionsound;
+    var lastPlayed = 0
 
     depth_dict = {{ depth_dict | safe }}
 
