@@ -3,6 +3,8 @@
     <head>
         <title> Lore | Choose Your Own Adventure! </title>
 
+         <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+
         <script type="text/javascript">
             function keypressed(event) {
                 console.log(event)
@@ -30,16 +32,30 @@
             }
         </script>
     </head>
-    <body style="background-image: url({% static 'images/landing_page_bkg.jpg' %}); text-align: center;background-position: center;background-size: cover;font-size: 30px;color:white; ">
-        <div style='margin-top:20vh;margin-bottom: 20px; color:white;'>
-            <h1> Lore </h1>
-            <p> Choose your own adventure! </p>
-            <p> Coming soon.... </p>
+    <!--
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+        font-family: 'Montserrat', sans-serif;
+    --> 
+    <!--<body style="background-image: url({% static 'images/landing_page_bkg.jpg' %}); text-align: center;background-position: center;background-size: cover;font-size: 30px;color:white; ">-->
+    <body style="background-image: url(/static/images/seamless_headphones.png);background-repeat: repeat;text-align: center;background-position: center;background-size: 20%;font-size: 30px;color:white;">
+        <div style="
+    display: inline-block;
+    background: transparent;
+    margin-top: 12vh;
+    box-shadow: 0 0 4vh #111;
+    border-radius: 5%;
+    padding: 4vmin;">
+
+        <div style='margin-bottom: 20px;'>
+            <!--<h1> Lore </h1> -->
+            <img src="{% static 'images/lore-logo-whitetext.png' %}" style="width:30vh;height:30vh">
+            <p style='font-family: Montserrat, sans-serif'> Choose your own adventure! </p>
+            <p style='font-family: Montserrat, sans-serif'> Coming soon.... </p>
         </div>
         <div id='email_div'>
             <input id='email_sub' type='email' placeholder="Subscribe" onkeypress="keypressed(event)" 
-        style="background-image: url({% static 'images/email.png' %}); background-color:rgba(50,50,50,0.75);
-padding-left:0px;background-size:contain; background-repeat: no-repeat; background-position: right; font-size:inherit; text-align: center; color:white;padding:5px">
+        style="background-image: url(/static/images/email.png);background-color:rgba(15,25,30,0.75);padding-left:0px;background-size:contain;background-repeat: no-repeat;background-position: right;font-size:inherit;font-family: Montserrat, sans-serif;text-align: center;color:white;padding:5px;border-radius: 7px;border: 1px solid #04689E; width: 75vmin; max-width: 55vh;">
         </div>
+    </div>
     </body>
 </html>
