@@ -51,6 +51,7 @@
 
     function toggle_voice() {
     	if (document.getElementById("voice_checkbox").checked) { 
+    		console.log("Voice checkbox checked. Starting recognition")
     		recognition.start()
     	} else { 
     		recognition.stop()
@@ -327,17 +328,27 @@
     function playchapter() {
     	if (chaptersound) {
     		recognition.stop()
-    		chaptersound.play()
+    		chaptersound.play().then(function(value) {
+  				console.log(value);
+			}).catch(error => {
+      			console.log(error)
+    		});;
     		lastPlayed = 'c'
     		chaptersound.onended = function() {
     			if (questionsound) {
     				questionsound.play()
     				lastPlayed = 'q'
     				questionsound.onended = function() {
-    					recognition.start()
+    					if (document.getElementById("voice_checkbox").checked) { 
+    						console.log("Going back to starting recognition")
+    						recognition.start()
+    					}
     				}
     			} else {
-    				recognition.start()
+    				if (document.getElementById("voice_checkbox").checked) { 
+    						console.log("Going back to starting recognition")
+    						recognition.start()
+    				}
     			}
     		}
     	
@@ -374,14 +385,17 @@
 
 	recognition.onend = function() {
 	    //Again – give the user feedback that you are not listening anymore. If you wish to achieve continuous recognition – you can write a script to start the recognizer again here.
-	    if (document.getElementById("voice_checkbox").checked && 
+	    console.log("End called.")
+	    if (document.getElementById("voice_checkbox").checked && chaptersound &&
 	     chaptersound.paused) {
 	     	if (questionsound) {
 	     		if (questionsound.paused) {
+	     			console.log("Question paused. Restarting.")
 	     			recognition.start()
 	     		}
 	     	} else {
 	    	recognition.start()
+	    	console.log("Chapter paused. Restarting")
 	    	}
 
 	    }
