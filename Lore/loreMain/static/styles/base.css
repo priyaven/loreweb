@@ -1,0 +1,66 @@
+html {
+	background: #E8F2F4;
+	font: 14px Georgia, serif;
+}
+
+header, .header {
+	padding: 2px 30px 2px;
+	background-image: linear-gradient(to right, #04689E, #76C1EA, #47C6B6);
+	font: 20px Arial, sans-serif;
+	box-shadow: 0 0 9px #ffffff;
+}
+
+header a, .header a {
+	color: #ff5131;
+}
+
+a {
+	text-decoration: underline;
+	color: #424242;
+	}
+	
+a:hover {
+	color: #d50000;
+}
+
+/* Hamburger menu css that changes to cross */ 
+.hamburger {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.bar1, .bar2, .bar3 {
+  width: 35px;
+  height: 5px;
+  background-color: #E8F2F4;
+  margin: 6px 0;
+  transition: 0.4s;
+}
+
+/* Rotate first bar */
+.change .bar1 {
+  -webkit-transform: rotate(-45deg) translate(-9px, 6px) ;
+  transform: rotate(-45deg) translate(-9px, 6px) ;
+}
+
+/* Fade out the second bar */
+.change .bar2 {
+  opacity: 0;
+}
+
+/* Rotate last bar */
+.change .bar3 {
+  -webkit-transform: rotate(45deg) translate(-8px, -8px) ;
+  transform: rotate(45deg) translate(-8px, -8px) ;
+}
+/* END Hamburger menu css that changes to cross */ 
+
+.scrolling-wrapper {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
+.card {
+    display: inline-block;
+  }
