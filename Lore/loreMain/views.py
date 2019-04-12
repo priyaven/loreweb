@@ -18,7 +18,7 @@ def sms(request):
     # Add a message
     resp.message("Ahoy! Thanks so much for your message.")
 
-    return str(resp)
+    return HttpResponse(str(resp))
 
 def index(request):
     template = loader.get_template('loreMain/index.html')
