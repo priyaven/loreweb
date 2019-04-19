@@ -4,7 +4,7 @@ html {
 }
 
 header, .header {
-	padding: 2px 30px 2px;
+	padding: 10px 30px 10px;
 	background-image: linear-gradient(to right, #04689E, #76C1EA, #47C6B6);
 	font: 20px Arial, sans-serif;
 	box-shadow: 0 0 9px #ffffff;
@@ -59,8 +59,24 @@ a:hover {
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/*
+.card {
+    display: inline-block;
+  }
+*/
+
+.scrolling-wrapper-flexbox {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 
 .card {
-    display: inline-block;
+    flex: 0 0 auto;
   }

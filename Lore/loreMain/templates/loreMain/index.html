@@ -12,11 +12,11 @@
     </div>
 </section>
 
-<div class='scrolling-wrapper'>
+<div class='scrolling-wrapper-flexbox'>
     {% for story in stories %}
-    <div class="card">
-        <img class="card-img-top" src="{% static 'images/landing_page_bkg.jpg' %}" style="max-width:calc(100vw - 100px); max-height:40vh;" alt="Card image cap">
-        <div class="card-body">
+    <div class="card" align="center" style='padding-left: 70px; padding-right: 70px'>
+        <img class="card-img-top" src="{% static 'images/landing_page_bkg.jpg' %}" style="max-width:calc(100vw - 100px); max-height:40vh;" alt="Book Cover">
+        <div class="card-body" >
             <p class="card-text">
                 <div id="story_{{story.pk}}">
                     <div class="story_title">
