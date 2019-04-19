@@ -171,7 +171,7 @@
     		.attr("font-family", "sans-serif")
         	.attr("font-size", "10px")
         	.attr("text-anchor", 'middle')
-        	.attr("fill", "white");
+        	.attr("fill", "#E8F2F4");
       }
 
     }
@@ -278,7 +278,7 @@
 				.attr("font-family", "sans-serif")
 				.attr("text-anchor", "middle")
 			    .attr("font-size", "20px")
-			    .attr("fill", "white");
+			    .attr("fill", "#E8F2F4");
 
 		   single_target.append('text')
 			   	.attr('class', 'notext')
@@ -288,7 +288,7 @@
 				.attr("font-family", "sans-serif")
 				.attr("text-anchor", "middle")
 			    .attr("font-size", "20px")
-			    .attr("fill", "white");
+			    .attr("fill", "#E8F2F4");
 
 		  }
 
@@ -306,7 +306,7 @@
 			.attr("font-family", "sans-serif")
 			.attr("text-anchor", "middle")
 		    .attr("font-size", "20px")
-		    .attr("fill", "white");
+		    .attr("fill", "#E8F2F4");
 
 		    chapter_audio_url = depth_dict[cur_depth][node_id][1]
 		    question_audio_url = depth_dict[cur_depth][node_id][2]
@@ -470,7 +470,7 @@
 
     radii = [25, 80, 160, 240, 310]
 
-    colors = ['yellow', 'red', 'green', 'blue', 'navy']
+    colors = ['#01131D', '#033957', '#416A80', '#3ba395', '#4891b8']
 
     node_radius = 25 
 
@@ -527,11 +527,11 @@
     target1.append('text')
     	.attr('x', initial_center_x)
     	.attr('y', initial_center_y)
-    	.text("chapter " + chapters1)
+    	.text("chapter " + chapters1[0])
     	.attr("font-family", "sans-serif")
     	.attr("text-anchor", "middle")
         .attr("font-size", "10px")
-        .attr("fill", "white");
+        .attr("fill", "#E8F2F4");
 
     recognition.start();
 
