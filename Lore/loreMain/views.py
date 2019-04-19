@@ -12,14 +12,6 @@ from twilio.twiml.messaging_response import MessagingResponse
 
 # Create your views here.
 
-def sms(request):
-    resp = MessagingResponse()
-
-    # Add a message
-    resp.message("Ahoy! Thanks so much for your message.")
-
-    return HttpResponse(str(resp))
-
 def index(request):
     template = loader.get_template('loreMain/index.html')
     all_stories = Story.objects.all()
