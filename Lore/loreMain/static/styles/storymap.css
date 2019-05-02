@@ -39,7 +39,7 @@
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #04689E;
 }
 
 input:focus + .slider {
@@ -74,7 +74,7 @@ progress[value] {
   -webkit-appearance: none;
   appearance: none;
   background-color: white;
-  color: blue;
+  color: #04689E;
   height: 5px;
 }
 
@@ -82,9 +82,9 @@ progress[value]::-webkit-progress-bar {
   background-color: white;
   border-radius: 2px;
   border: 1px solid lighten(#acacac, 20%);
-  color: blue;
+  color: #04689E;
 }
 
 progress::-webkit-progress-value {
-  background-color: blue;
+  background-color: #04689E;
 }
