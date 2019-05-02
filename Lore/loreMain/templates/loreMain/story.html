@@ -29,7 +29,8 @@
     <small style="float: right; position: relative; right: 20px;" id="end-time">0.00</small>
     <br/>
 	<div style='text-align: center; padding-top: 10px'> 
-		<button id='rewind15' disabled="True" style='background:none; border: none; cursor:pointer;'>  
+		<button id='rewind15' disabled="True" onclick="rewind()" 
+			style='background:none; border: none; cursor:pointer;'>  
 			<img src="{% static 'images/rewind_15.png' %}" width="50vw" height="50vh"> 
 		 </button>
 		<button id='playstory' onclick="playStory()" disabled="True" 
@@ -44,7 +45,7 @@
 			style='background:none; border: none; cursor:pointer;'>  
 			<img src="{% static 'images/ask_question.png' %}" width="50vw" height="50vh"> 
 		 </button>
-		<button id='forward15' disabled="True" style='background:none; border: none; cursor:pointer;'> 
+		<button id='forward15' disabled="True" onclick='ffw()' style='background:none; border: none; cursor:pointer;'> 
 			<img src="{% static 'images/forward_15.png' %}" width="50vw" height="50vh"> 
 		</button>
 	</div>
@@ -65,8 +66,8 @@
       </svg>
     </div>
     <div class="singleNode" style="display: none; visibility: hidden; text-transform: capitalize;">
-    	<button onclick="show_storymap()"> 
-      		<img src="{% static 'images/backbutton.png' %}" width="30vw" height="30vh" title="Back to Story Map">
+    	<button onclick="show_storymap()" style='background:none; border: none; cursor:pointer;'> 
+      		<img src="{% static 'images/backbutton.png' %}" width="50vw" height="50vh" title="Back to Story Map">
       	</button>
       <svg class='singleSvgNode' width="500" height="400">
       </svg>
@@ -96,6 +97,31 @@
 		});
 
 		infiniteLoop()
+	}
+
+	function ffw() {
+		if (cursound.duration > 15) {
+			cursound.pause()
+			newtime = cursound.currentTime + 15
+			if (newtime > cursound.duration) {
+				newtime = cursound.duration - 1
+			}
+			cursound.currentTime = newtime
+			cursound.play()
+		}
+	}
+
+	function rewind() {
+		if (cursound.duration > 15) {
+			cursound.pause()
+			newtime = cursound.currentTime - 15
+			if (newtime < 0) {
+				newtime = 0
+			}
+			cursound.currentTime = newtime
+			cursound.play()
+		}
+
 	}
 
 	function str_pad_left(string,pad,length) {
@@ -400,6 +426,8 @@
 		    }
 		    document.getElementById("playpause").disabled = false;
 		    document.getElementById("playstory").disabled = false;
+		    document.getElementById('forward15').disabled = false; 
+		    document.getElementById('rewind15').disabled = false; 
 		    if (question_audio_url) {
 		    	questionsound = new Audio(".." + question_audio_url)
 		    	questionsound.onended = function() {
