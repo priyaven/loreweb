@@ -25,7 +25,7 @@
 	 <span id="seek-obj-container" style="padding-bottom:10px">
 	 	<progress id="seek-obj" value="0" max="1"></progress>
     </span>
-    <small style="float: left; position: relative; left: 15px;" id="start-time">0.00</small>
+    <small style="float: left; position: relative; left: 20px;" id="start-time">0.00</small>
     <small style="float: right; position: relative; right: 20px;" id="end-time">0.00</small>
     <br/>
 	<div style='text-align: center; padding-top: 10px'> 
@@ -78,14 +78,45 @@
 
 <script>
 	window.onload = function() {
+		document.getElementById('seek-obj').addEventListener('click', function (e) {
+			if (cursound && cursound.duration) {
+			    var x = e.pageX - this.offsetLeft;
+			    
+			    var preclick = document.getElementById('seek-obj').position;
+			    
+			    var xconvert = x/this.offsetWidth; // you need a value in [0,1] range
+			    var finalx = (xconvert).toFixed(1); //round up to one digit after comma
+			    document.getElementById('seek-obj').value = finalx;
+			    if (!cursound.paused){
+			    	cursound.pause()
+			    }
+			    cursound.currentTime = xconvert*cursound.duration
+			    cursound.play()
+			}
+		});
+
 		infiniteLoop()
+	}
+
+	function str_pad_left(string,pad,length) {
+    	return (new Array(length+1).join(pad)+string).slice(-length);
+	}
+
+	function secToMin(time) {
+		var minutes = Math.floor(time / 60);
+		var seconds = Math.ceil(time) - (minutes * 60);
+		return str_pad_left(minutes,'0',2)+':'+str_pad_left(seconds,'0',2);
 	}
 
 	function infiniteLoop() {
 		var seek = window['seek-obj']
+		startdur = window['start-time']
+		enddur = window['end-time']
 		if(seek) {
 			if(cursound && cursound.duration) {
 				seek.value = cursound.currentTime / cursound.duration
+				startdur.innerText = secToMin(cursound.currentTime)
+				enddur.innerText = secToMin(cursound.duration)
 			}
 		}
 
@@ -107,6 +138,7 @@
 
     function playStory() {
     	if (chaptersound) {
+    		recognition.stop()
     		cursound = chaptersound
     		cursound.play()
     		lastPlayed = 'c'
@@ -115,6 +147,7 @@
 
     function playQuestion() {
     	if (questionsound) {
+    		recognition.stop()
     		cursound = questionsound
     		cursound.play()
     	}
