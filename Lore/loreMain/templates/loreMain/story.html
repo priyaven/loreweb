@@ -4,26 +4,60 @@
 <link rel="stylesheet" type="text/css" href="{% static 'styles/storymap.css' %}"/>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 
-<div id='VoiceRecog' style='text-align:center; text-transform: capitalize;'>
-	Voice recognition: &nbsp; &nbsp;  
-	<label class="switch">
+<div id='VoiceRecog' style='text-align:center; text-transform: capitalize; font-family: Montserrat, sans-serif;
+	 font-size: 12px; font-weight: bold;'>
+	Voice recognition &nbsp; &nbsp;
+	<label class="switch" style='vertical-align: middle;'>
 	  <input type="checkbox" checked onclick="toggle_voice()" id="voice_checkbox">
 	  <span class="slider round"></span>
 	</label>
-	<p> 
+	<!--
+	<p style='font-family: Montserrat, sans-serif'> 
 		Say "Start" or "Begin" to start. 
 		"Yes" or "No" to navigate. 
 		"Back" to go back to your previous view
 		"Home" to go back to the story view. 
 	</p>
+-->
 </div>
 
-<div id="story_{{story.pk}}">
-	<div class="story_title" style='text-align:center; text-transform: capitalize;'>
-		<h2><a href="../story/{{ story.pk }}">{{ story.title }}</a></h2>
+<div id="player">
+	 <span id="seek-obj-container" style="padding-bottom:10px">
+	 	<progress id="seek-obj" value="0" max="1"></progress>
+    </span>
+    <small style="float: left; position: relative; left: 15px;" id="start-time">0.00</small>
+    <small style="float: right; position: relative; right: 20px;" id="end-time">0.00</small>
+    <br/>
+	<div style='text-align: center; padding-top: 10px'> 
+		<button id='rewind15' disabled="True" style='background:none; border: none; cursor:pointer;'>  
+			<img src="{% static 'images/rewind_15.png' %}" width="50vw" height="50vh"> 
+		 </button>
+		<button id='playstory' onclick="playStory()" disabled="True" 
+			style='background:none; border: none; cursor:pointer;'>  
+			<img src="{% static 'images/play_story.png' %}" width="50vw" height="50vh"> 
+		 </button>
+		<button id='playpause' onclick="togglePlay()" disabled="True" 
+			style='background:none; border: none; cursor:pointer;'> 
+			<img src="{% static 'images/play.png' %}" width="50vw" height="50vh">  
+		</button>
+		<button id='playquestion' onclick='playQuestion()' disabled="True" 
+			style='background:none; border: none; cursor:pointer;'>  
+			<img src="{% static 'images/ask_question.png' %}" width="50vw" height="50vh"> 
+		 </button>
+		<button id='forward15' disabled="True" style='background:none; border: none; cursor:pointer;'> 
+			<img src="{% static 'images/forward_15.png' %}" width="50vw" height="50vh"> 
+		</button>
 	</div>
-	<div class="story_author" style='text-align:center; text-transform: capitalize;'>
-		{{ story.author }}
+	<br/>
+</div>
+
+
+<div id="story_{{story.pk}}">
+	<div class="story_title" style='text-align:center; text-transform: capitalize; font-family: Montserrat, sans-serif'>
+		<h1><a href="../story/{{ story.pk }}">{{ story.title }}</a></h1>
+	</div>
+	<div class="story_author" style='text-align:center; text-transform: capitalize; font-family: Montserrat, sans-serif'>
+		<h3>{{ story.author }}</h3>
 	</div>
 
 	<div class="fullSvg" style='text-transform: capitalize;'>
@@ -31,22 +65,32 @@
       </svg>
     </div>
     <div class="singleNode" style="display: none; visibility: hidden; text-transform: capitalize;">
-      <button onclick="show_storymap()"> Back to storymap </button>
+    	<button onclick="show_storymap()"> 
+      		<img src="{% static 'images/backbutton.png' %}" width="30vw" height="30vh" title="Back to Story Map">
+      	</button>
       <svg class='singleSvgNode' width="500" height="400">
       </svg>
     </div>
 </div>
 
-<div id="player">
-	<button id='playpause' onclick="togglePlay()" disabled="True" style='background-color: transparent;'> 
-		<img src="{% static 'images/play.png' %}" width="30vw" height="30vh">  
-	</button>
-	<button id='playstory' onclick="playStory()" disabled="True"> Play Story </button>
-	<button id='playquestion' onclick='playQuestion()' disabled="True"> Play Question </button>
-</div>
+
 
 
 <script>
+	window.onload = function() {
+		infiniteLoop()
+	}
+
+	function infiniteLoop() {
+		var seek = window['seek-obj']
+		if(seek) {
+			if(cursound && cursound.duration) {
+				seek.value = cursound.currentTime / cursound.duration
+			}
+		}
+
+		setTimeout(infiniteLoop, 16)
+	}
 
 	function test(text){
      	alert(text)
@@ -63,13 +107,16 @@
 
     function playStory() {
     	if (chaptersound) {
-    		chaptersound.play()
+    		cursound = chaptersound
+    		cursound.play()
+    		lastPlayed = 'c'
     	}
     }
 
     function playQuestion() {
     	if (questionsound) {
-    		questionsound.play()
+    		cursound = questionsound
+    		cursound.play()
     	}
     }
 
@@ -86,39 +133,17 @@
     	} else {
     		return
     	}
-    	playpausebutton.innerHTML = "<img src=" + curimg + " width='30vw' height='30vh'>" 
+    	playpausebutton.innerHTML = "<img src=" + curimg + " width='50vw' height='50vh'>" 
     }
 
     function togglePlay() {
-    	if (lastPlayed == 'c') {
-    		if (chaptersound) {
-    			if (chaptersound.paused) {
-    				togglePlayButton('play')
-    				chaptersound.play()
-    			} else {
-    				togglePlayButton('pause')
-    				chaptersound.pause()
-    			}
+    	if (cursound) {
+    		if (cursound.paused) { 
+    			togglePlayButton('play')
+    			cursound.play()
     		} else {
-    			if (questionsound && questionsound.paused) {
-    				togglePlayButton('play')
-    				questionsound.play()
-    			}
-    		}
-    	} else if (lastPlayed == 'q') {
-    		if (questionsound) {
-    			if (questionsound.paused) {
-    				togglePlayButton('play')
-    				questionsound.play()
-    			} else {
-    				togglePlayButton('pause')
-    				questionsound.pause()
-    			}
-    		} else {
-    			if (chaptersound && chaptersound.paused) {
-    				togglePlayButton('play')
-    				chaptersound.play()
-    			}
+    			togglePlayButton('pause') 
+    			cursound.pause()
     		}
     	}
 
@@ -336,10 +361,17 @@
 		    question_audio_url = depth_dict[cur_depth][node_id][2]
 
 		    chaptersound = new Audio(".." + chapter_audio_url)
+		    chaptersound.onended = function() {
+		    	playq()
+		    	onEndSound() 
+		    }
 		    document.getElementById("playpause").disabled = false;
 		    document.getElementById("playstory").disabled = false;
 		    if (question_audio_url) {
 		    	questionsound = new Audio(".." + question_audio_url)
+		    	questionsound.onended = function() {
+		    		onEndSound() 
+		    	}
 		    	document.getElementById("playquestion").disabled = false;
 		    } else { 
 		    	questionsound = null 
@@ -351,37 +383,41 @@
     }
 
     function playchapter() {
-    	togglePlayButton('play')
     	if (chaptersound) {
+    		togglePlayButton('play')
     		recognition.stop()
-    		chaptersound.play().then(function(value) {
+    		cursound = chaptersound
+    		cursound.play().then(function(value) {
   				console.log(value);
 			}).catch(error => {
       			console.log(error)
     		});;
     		lastPlayed = 'c'
-    		chaptersound.onended = function() {
-    			if (questionsound) {
-    				questionsound.play()
-    				lastPlayed = 'q'
-    				questionsound.onended = function() {
-    					togglePlayButton('pause')
-    					if (document.getElementById("voice_checkbox").checked) { 
-    						console.log("Going back to starting recognition")
-    						recognition.start()
-    					}
-    				}
-    			} else {
-    				togglePlayButton('pause')
-    				if (document.getElementById("voice_checkbox").checked) { 
-    						console.log("Going back to starting recognition")
-    						recognition.start()
-    				}
-    			}
-    		}
-    	
     	}
     }
+
+    function playq() {
+    	if (questionsound && lastPlayed == 'c') { 
+    		recognition.stop()
+    		togglePlayButton('play')
+    		cursound = questionsound
+    		cursound.play().then(function(value) {
+  				console.log(value);
+			}).catch(error => {
+      			console.log(error)
+    		});;
+    		lastPlayed = 'q'
+    	}
+
+    }
+
+    function onEndSound() {
+    	togglePlayButton('pause')
+		if (document.getElementById("voice_checkbox").checked) { 
+			console.log("Going back to starting recognition")
+			recognition.start()
+		}
+	}
 
     function show_storymap() {
 
@@ -414,7 +450,7 @@
 	recognition.onend = function() {
 	    //Again – give the user feedback that you are not listening anymore. If you wish to achieve continuous recognition – you can write a script to start the recognizer again here.
 	    console.log("End called.")
-	    if (document.getElementById("voice_checkbox").checked && chaptersound &&
+	    /*if (document.getElementById("voice_checkbox").checked && chaptersound &&
 	     chaptersound.paused) {
 	     	if (questionsound) {
 	     		if (questionsound.paused) {
@@ -426,6 +462,10 @@
 	    	console.log("Chapter paused. Restarting")
 	    	}
 
+	    }*/
+	    if (document.getElementById("voice_checkbox").checked && cursound && cursound.paused) {
+	    	console.log("Sound paused. Restarting...")
+	    	recognition.start()
 	    }
 	    
 	};
@@ -487,7 +527,7 @@
 	    } //end for loop
 	}; 
 
-    var bbox, radii, svg, target, chaptersound, questionsound;
+    var bbox, radii, svg, target, chaptersound, questionsound, cursound;
     var lastPlayed = 0
 
     depth_dict = {{ depth_dict | safe }}
