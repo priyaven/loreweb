@@ -7,9 +7,6 @@ from django.template import loader
 
 from .models import InterestedUsers, Story, StoryChapters
 
-from twilio.twiml.messaging_response import MessagingResponse
-
-
 # Create your views here.
 
 def index(request):
