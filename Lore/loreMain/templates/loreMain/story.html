@@ -361,6 +361,16 @@
 		            .attr('onclick', "showSingleNode(" + prev_depth + "," + prev_node_id + ")")
 		            .attr('transform', "translate(" + cur_x + "," + 0 + ")")
 		            .attr('r', circle_radius);
+
+		    single_target.append('text')
+		   	.attr('class', 'prevtext')
+			.attr('x', cur_x)
+			.attr('y', 0)
+			.text(depth_dict[cur_depth-1][Math.floor(node_id/2)][0])
+			.attr("font-family", "sans-serif")
+			.attr("text-anchor", "middle")
+		    .attr("font-size", "20px")
+		    .attr("fill", "#E8F2F4");
 		  }
 
 		  singleSvgDiv = document.getElementsByClassName('singleNode')
