@@ -26,19 +26,25 @@
 	<div class="story_title" style='text-align:center; text-transform: capitalize; font-family: Montserrat, sans-serif'>
 		<h1><a href="../story/{{ story.pk }}">{{ story.title }}</a></h1>
 	</div>
-	<div class="story_author" style='text-align:center; text-transform: capitalize; font-family: Montserrat, sans-serif'>
+	<div style='text-align:center; text-transform: capitalize; font-family: Montserrat, sans-serif'>
 		<h3>{{ story.author }}</h3>
-	</div>
-
-	<div class="fullSvg" style='text-transform: capitalize;'>
-      <svg class='fullSvgNode' width="90vw" height="90vh">
-      </svg>
+	</div>	
+	
+	<div class='modal' id='svgmodal'> 
+		<!--<div class="modal-header">
+    		<h2>Modal Header</h2>
+  		</div>-->
+  		<span class="close">&times;</span>
+		<div class="fullSvg" id="fullsvg" style='text-transform: capitalize;'>
+      		<svg class='fullSvgNode' width="100%" height="100%" style='background-color: #E8F2F4; border-radius: 16px;'>
+      		</svg>
+    	</div>
     </div>
-    <div class="singleNode" style="display: none; visibility: hidden; text-transform: capitalize;">
+    <div class="singleNode" style="display: block; visibility: visible; text-transform: capitalize;">
     	<button onclick="show_storymap()" style='background:none; border: none; cursor:pointer;'> 
       		<img src="{% static 'images/backbutton.png' %}" width="50vw" height="50vh" title="Back to Story Map">
       	</button>
-      <svg class='singleSvgNode' width="90vw" height="90vh">
+      <svg class='singleSvgNode'width="90vw" height="90vh">
       </svg>
     </div>
 </div>
@@ -300,9 +306,11 @@
 
 		 cur_color = colors[cur_depth - 1]
 
-		  fullsvgDiv = document.getElementsByClassName('fullSvg')
+		  /*fullsvgDiv = document.getElementsByClassName('fullSvg')
 		  fullsvgDiv[0].style.visibility='hidden' 
-		  fullsvgDiv[0].style.display='none'
+		  fullsvgDiv[0].style.display='none'*/
+
+		  modal.style.display = "none";
 
 		  singleSvgDiv = document.getElementsByClassName('singleNode')
 		  singleSvgDiv[0].style.visibility='visible' 
@@ -504,13 +512,9 @@
 
     function show_storymap() {
 
-    	singleSvgDiv = document.getElementsByClassName('singleNode')
-      	singleSvgDiv[0].style.visibility='hidden' 
-      	singleSvgDiv[0].style.display='none'
+      	var modal = document.getElementById('svgmodal');
+      	modal.style.display = "block";
 
-      	fullsvgDiv = document.getElementsByClassName('fullSvg')
-      	fullsvgDiv[0].style.visibility='visible' 
-      	fullsvgDiv[0].style.display='block'
 
     }
     /* Web Speech Recognition API initialization */
@@ -609,6 +613,21 @@
 	        } */
 	    } //end for loop
 	}; 
+
+	/* close span for svg modal */ 
+	var modal = document.getElementById('svgmodal');
+
+	var span = document.getElementsByClassName("close")[0];
+	span.onclick = function() {
+  		modal.style.display = "none";
+	}
+	// When the user clicks anywhere outside of the modal, close it
+	window.onclick = function(event) {
+  		if (event.target == modal) {
+    		modal.style.display = "none";
+  		}
+	}
+
 
     var bbox, radii, svg, target, chaptersound, questionsound, cursound;
     var lastPlayed = 0
