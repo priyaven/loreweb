@@ -456,10 +456,7 @@
 
 		    chaptersound = new Audio(".." + chapter_audio_url)
 		    //alert(".." + chapter_audio_url)
-		    chaptersound.onended = function() {
-		    	playq()
-		    	onEndSound() 
-		    }
+		    
 		    document.getElementById("playpause").disabled = false;
 		    document.getElementById("playstory").disabled = false;
 		    document.getElementById('forward15').disabled = false; 
@@ -469,10 +466,17 @@
 		    	questionsound.onended = function() {
 		    		onEndSound() 
 		    	}
+		    	chaptersound.onended = function() {
+		    		playq()
+		    	}
 		    	document.getElementById("playquestion").disabled = false;
 		    } else { 
 		    	questionsound = null 
 		    	document.getElementById("playquestion").disabled = true;
+		    	chaptersound.onended = function() {
+		    		playq()
+		    		onEndSound() 
+		    	}
 		    }
 		    
 		    playchapter()
@@ -734,6 +738,7 @@
         .attr('transform', "translate(" + initial_center_x + "," + initial_center_y + ")");
     chapters1 = depth_dict[1][0]
     target1.append('text')
+    	.attr('id', 'depth_1_node_0_txt')
     	.attr('x', initial_center_x)
     	.attr('y', initial_center_y)
     	.text("Chapter " + chapters1[0])
