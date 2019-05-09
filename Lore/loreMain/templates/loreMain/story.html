@@ -264,7 +264,6 @@
     }
 
     function draw_nodes(target_obj, nodes, cur_level) { 
-      
       for (i=0; i< nodes.length; i++) {
       	cur_depth = cur_level + 1 
         target_obj.append('circle')
@@ -276,8 +275,9 @@
       }
     }
 
-    function draw_text(target_obj, nodes, titles) {
+    function draw_text(target_obj, nodes, titles, cur_level) {
     	for (i=0; i< nodes.length; i++) {
+    		cur_depth = cur_level + 1 
     		target_obj.append('text')
     		.attr('id', "depth_" + cur_depth + "_node_" + i + "_txt")
     		.attr('x', nodes[i][0])
@@ -292,6 +292,12 @@
     }
 
     function showSingleNode(cur_depth, node_id) {
+
+    	// Strikethrough the node in the main story map. 
+    	textnodeid = "depth_" + cur_depth + "_node_" + node_id + "_txt"
+    	textnode = document.getElementById(textnodeid)
+    	textnode.style.textDecoration =  "line-through"
+
 
 		 if (cur_depth==1) {
 		 	prev_color = ''
@@ -714,10 +720,10 @@
     draw_nodes(target4, nodes4, 3)
     draw_nodes(target5, nodes5, 4)
 
-    draw_text(target2, nodes2, chapters2)
-    draw_text(target3, nodes3, chapters3)
-    draw_text(target4, nodes4, chapters4)
-    draw_text(target5, nodes5, chapters5)
+    draw_text(target2, nodes2, chapters2, 1)
+    draw_text(target3, nodes3, chapters3, 2)
+    draw_text(target4, nodes4, chapters4, 3)
+    draw_text(target5, nodes5, chapters5, 4)
 
     target1 = svg.append('g').attr('fill', colors[0])
     target1.append('circle')
