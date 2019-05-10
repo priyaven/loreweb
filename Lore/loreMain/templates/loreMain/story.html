@@ -579,8 +579,7 @@
 	    alert(event.results.length)
 
 	    for (var i = event.resultIndex; i < event.results.length; ++i) {      
-	        if (event.results[i].isFinal)  { //Final results
-	        	alert(event.results[i][0].confidence)
+	        if ((event.results[i].isFinal) && (event.results[i][0].confidence > 0)) { //Final results
 	        	transcript = event.results[i][0].transcript
 	        	alert(transcript)
 	            console.log("final results: " + transcript);   //Of course – here is the place to do useful things with the results.
