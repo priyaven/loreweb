@@ -578,6 +578,7 @@
 	    for (var i = event.resultIndex; i < event.results.length; ++i) {      
 	        if (event.results[i].isFinal) { //Final results
 	        	transcript = event.results[i][0].transcript
+	        	alert(transcript)
 	            console.log("final results: " + transcript);   //Of course – here is the place to do useful things with the results.
 	            if (transcript.includes("yes") || transcript.includes('yeah')) {
 	            	singleSvgDiv = document.getElementsByClassName('singleNode')
