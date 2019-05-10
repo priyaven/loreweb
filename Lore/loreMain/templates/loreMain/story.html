@@ -541,6 +541,7 @@
 	}
 
 	recognition.onstart = function() {
+		finalized = false // This is to fix android bug which generates multiple events for each utterance. Each time this is restarted, only one utterance can be acted on. 
 	    //Listening (capturing voice from audio input) started.
 	    //This is a good place to give the user visual feedback about that (i.e. flash a red light, etc.)
 	};
@@ -574,8 +575,7 @@
 	        recognition.stop();
 	        return;
 	    }
-	    finalized = false
-	    
+	    	    
 	    for (var i = event.resultIndex; i < event.results.length; ++i) {      
 	        if ((event.results[i].isFinal) && (event.results[i][0].confidence > 0) && !finalized) { //Final results
 	        	transcript = event.results[i][0].transcript
