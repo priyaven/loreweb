@@ -574,15 +574,14 @@
 	        recognition.stop();
 	        return;
 	    }
-	    alert("An Event Happened!!")
-
-	    alert(event.results.length)
-
+	    finalized = false
+	    
 	    for (var i = event.resultIndex; i < event.results.length; ++i) {      
-	        if ((event.results[i].isFinal) && (event.results[i][0].confidence > 0)) { //Final results
+	        if ((event.results[i].isFinal) && (event.results[i][0].confidence > 0) && !finalized) { //Final results
 	        	transcript = event.results[i][0].transcript
 	        	alert(transcript)
 	            console.log("final results: " + transcript);   //Of course – here is the place to do useful things with the results.
+	            finalized = true
 	            if (transcript.includes("yes") || transcript.includes('yeah')) {
 	            	singleSvgDiv = document.getElementsByClassName('singleNode')
 	            	if (singleSvgDiv[0].style.display != 'none') {
