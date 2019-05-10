@@ -575,6 +575,8 @@
 	        return;
 	    }
 
+	    alert(event.results.length)
+
 	    for (var i = event.resultIndex; i < event.results.length; ++i) {      
 	        if (event.results[i].isFinal) { //Final results
 	        	transcript = event.results[i][0].transcript
